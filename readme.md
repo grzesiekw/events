@@ -14,7 +14,7 @@ vagrant-coreos
 2. events-api (http://172.17.8.21:8080/event)
 3. events-ui (http://172.17.8.21:9000)
 
-*Run*
+*How*
 
 1. Generate new discovery URL: http://discovery.etcd.io/new
 2. Update discovery URL, files: environment/vagrant-coreos/user-data-app.yaml, environment/vagrant-coreos/user-data-db.yaml
