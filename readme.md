@@ -21,18 +21,19 @@ vagrant-coreos
 3. Run: vagrant up (in environment/vagrant-coreos)
 4. Run: ssh-add ~/.vagrant.d/insecure_private_key
 5. Run: vagrant ssh core-db-01 -- -A
-6. in core-db-01
-6.1. Run: fleetctl submit services/*
-6.2. Run: fleetctl start services/*
+6. Run (core-db-01): fleetctl submit services/*
+7. Run (core-db-01): fleetctl start services/*
 
+<pre>
 Triggered global unit mongodb-ambassador.service start
 Triggered global unit registrator.service start
 Unit events-api.service launched on 220d62c3.../172.17.8.21
 Unit events-ui.service launched on 220d62c3.../172.17.8.21
 Unit mongodb.service launched on 2381c95f.../172.17.8.11
 (or something similar)
+</pre>
 
-6.3. Run: fleetctl list-units (... wait for all services)
+8. Run (core-db-01): fleetctl list-units (... wait for all services)
 
 UNIT				        |MACHINE			        |ACTIVE	|SUB
 :---------------------------|:--------------------------|:------|:------
@@ -45,8 +46,9 @@ registrator.service		    |61278f87.../172.17.8.21	|active	|running
 
 (if some service has status ACTIVE=failed, check service with fleetctl or systemctl)
 
-7. Run jmeter tests
+9. Run jmeter tests
 
+<pre>
 jmeter -n -t events-api/src/test/jmeter/events.jmx
 Creating summariser <summary>
 Created the tree successfully using events-api/src/test/jmeter/events.jmx
@@ -57,3 +59,4 @@ summary +  10048 in  17,1s =  588,9/s Avg:   162 Min:     5 Max:   429 Err:     
 summary =  20000 in    42s =  481,3/s Avg:   203 Min:     5 Max:  4052 Err:     0 (0,00%)
 Tidying up ...    @ Tue Feb 24 21:58:46 CET 2015 (1424811526849)
 ... end of run
+</pre>
