@@ -1,0 +1,16 @@
+[Unit]
+Description=MongoDB Ambassador Service
+
+[Service]
+EnvironmentFile=/etc/environment
+TimeoutStopSec=30
+ExecStartPre=-/usr/bin/docker kill %n
+ExecStartPre=-/usr/bin/docker rm %n
+ExecStartPre=/usr/bin/docker pull progrium/ambassadord
+ExecStart=/usr/bin/docker run --name %n -e PORT=27017 --expose 27017 progrium/ambassadord etcd://${COREOS_PRIVATE_IPV4}:4001/services/mongo
+ExecStop=-/usr/bin/docker kill %n
+TimeoutStartSec=30m
+
+[X-Fleet]
+MachineMetadata=type=compute
+Global=true

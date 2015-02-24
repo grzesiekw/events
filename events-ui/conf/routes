@@ -1,0 +1,7 @@
+GET         /                    controllers.Events.index
+POST        /find                controllers.Events.find
+
+GET         /assets/*file        controllers.Assets.at(path="/public", file)
+
+
+

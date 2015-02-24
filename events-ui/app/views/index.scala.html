@@ -1,0 +1,53 @@
+<!doctype html>
+<html ng-app="eventsApp">
+    <head>
+        <link rel='stylesheet' href='@routes.Assets.at("lib/bootstrap/css/bootstrap.min.css")'>
+        <script src='@routes.Assets.at("lib/angularjs/angular.min.js")'></script>
+        <script src='@routes.Assets.at("../assets/javascript/app.js")'></script>
+    </head>
+    <body ng-controller="EventsCtrl">
+        <div class="col-sm-offset-2 col-sm-8">
+            <h2 class="alert alert-info">Find events</h2>
+
+            <form class="form-horizontal">
+                <div class="form-group" ng-repeat="eventKey in eventKeys">
+                    <label for="key1" class="col-sm-1 control-label">Key</label>
+                    <div class="col-sm-2">
+                        <input type="text" class="form-control" id="key1" placeholder="Key" ng-model="eventKey.key">
+                    </div>
+                    <label for="value1" class="col-sm-1 control-label">Value</label>
+                    <div class="col-sm-2">
+                        <input type="text" class="form-control" id="value1" placeholder="Value" ng-model="eventKey.value">
+                    </div>
+                    <div class="col-sm-2" ng-if="$last">
+                        <button type="submit" class="btn btn-default glyphicon glyphicon-plus-sign" ng-click="addEventKey()"></button>
+                    </div>
+                    <div class="col-sm-2" ng-if="!$last && ($first || $middle)">
+                        <button type="submit" class="btn btn-default glyphicon glyphicon-minus-sign" ng-click="removeEventKey($index)"></button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-offset-4 col-sm-2">
+                        <button type="submit" class="btn btn-default" ng-click="findEvents()">Search</button>
+                    </div>
+                </div>
+            </form>
+
+            <div class="clearfix"></div>
+
+            <table class="table table-bordered">
+                <tr>
+                    <th class="col-sm-1">Lp.</th>
+                    <th class="col-sm-1">Id</th>
+                    <th class="col-sm-8">Description</th>
+                </tr>
+                <tr ng-repeat="event in events">
+                    <td>{{$index + 1}}</td>
+                    <td>{{event.id}}</td>
+                    <td>{{event.description}}</td>
+                </tr>
+            </table>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,18 @@
+[Unit]
+Description=Events API Service
+Requires=docker.service
+Requires=mongodb-ambassador.service
+After=docker.service
+After=mongodb-ambassador.service
+
+[Service]
+TimeoutStartSec=0
+ExecStartPre=-/usr/bin/docker kill events-api
+ExecStartPre=-/usr/bin/docker rm events-api
+ExecStartPre=/usr/bin/docker pull grzesiekw/events-api:0.1
+ExecStart=/usr/bin/docker run --name events-api -e MONGO_DB_HOST=mongodb -e API_HOST=0.0.0.0 -p 0.0.0.0:8080:8080 --link mongodb-ambassador.service:mongodb grzesiekw/events-api:0.1
+ExecStop=/usr/bin/docker stop events-api
+TimeoutStartSec=30m
+
+[X-Fleet]
+MachineMetadata=type=compute

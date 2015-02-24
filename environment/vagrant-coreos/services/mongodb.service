@@ -1,0 +1,14 @@
+[Unit]
+Description=MongoDB Service
+After=docker.service
+
+[Service]
+ExecStartPre=-/usr/bin/docker kill mongodb
+ExecStartPre=-/usr/bin/docker rm mongodb
+ExecStartPre=/usr/bin/docker pull mongo:2.6.6
+ExecStart=/usr/bin/docker run --name mongodb -p 27017:27017 -v /data/db:/data/db mongo:2.6.6
+ExecStop=/usr/bin/docker stop mongodb
+TimeoutStartSec=30m
+
+[X-Fleet]
+MachineMetadata=type=storage

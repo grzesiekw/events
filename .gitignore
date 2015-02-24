@@ -1,0 +1,7 @@
+*.iml
+.idea
+target/
+*.swp
+*.log
+.vagrant
+jmeter.log

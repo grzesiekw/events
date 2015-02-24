@@ -1,0 +1,77 @@
+require 'fileutils'
+
+Vagrant.require_version ">= 1.6.0"
+
+DB_CLOUD_CONFIG_PATH = File.join(File.dirname(__FILE__), "user-data-db.yaml")
+APP_CLOUD_CONFIG_PATH = File.join(File.dirname(__FILE__), "user-data-app.yaml")
+
+# Defaults for config options defined in CONFIG
+$app_num_instances = 1
+$db_num_instances = 1
+$update_channel = "stable"
+$enable_serial_logging = false
+$vb_gui = false
+$vb_memory = 1024
+$vb_cpus = 1
+
+$app_vb_memory = 2048
+$app_vb_cpus = 2
+
+$db_vb_memory = 2048
+$db_vb_cpus = 2
+
+Vagrant.configure('2') do |config|
+
+  config.ssh.insert_key = true
+
+  config.vm.box = "coreos-%s" % $update_channel
+  config.vm.box_version = ">= 308.0.1"
+  config.vm.box_url = "http://%s.release.core-os.net/amd64-usr/current/coreos_production_vagrant.json" % $update_channel
+
+  config.vm.provider :virtualbox do |v|
+    # On VirtualBox, we don't have guest additions or a functional vboxsf
+    # in CoreOS, so tell Vagrant that so it can be smarter.
+    v.check_guest_additions = false
+    v.functional_vboxsf     = false
+  end
+
+  # plugin conflict
+  if Vagrant.has_plugin?("vagrant-vbguest")
+    config.vbguest.auto_update = false
+  end
+
+  (1..$db_num_instances).each do |i|
+    config.vm.define vm_name = "core-db-%02d" % i do |config|
+      config.vm.provider :virtualbox do |vb|
+        vb.gui = $vb_gui
+        vb.memory = $db_vb_memory
+        vb.cpus = $db_vb_cpus
+      end
+
+      ip = "172.17.8.#{i + 10}"
+      config.vm.network :private_network, ip: ip
+
+      config.vm.provision :file, :source => "#{DB_CLOUD_CONFIG_PATH}", :destination => "/tmp/vagrantfile-user-data"
+      config.vm.provision :file, :source => "services", :destination => "/home/core/services"
+      config.vm.provision :shell, :inline => "mv /tmp/vagrantfile-user-data /var/lib/coreos-vagrant/", :privileged => true
+    end
+  end
+
+  (1..$app_num_instances).each do |i|
+
+    config.vm.define vm_name = "core-app-%02d" % i do |config|
+      config.vm.provider :virtualbox do |vb|
+        vb.gui = $vb_gui
+        vb.memory = $app_vb_memory
+        vb.cpus = $app_vb_cpus
+      end
+
+      ip = "172.17.8.#{i + 20}"
+      config.vm.network :private_network, ip: ip
+
+      config.vm.provision :file, :source => "#{APP_CLOUD_CONFIG_PATH}", :destination => "/tmp/vagrantfile-user-data"
+      config.vm.provision :shell, :inline => "mv /tmp/vagrantfile-user-data /var/lib/coreos-vagrant/", :privileged => true
+    end
+  end
+
+end
